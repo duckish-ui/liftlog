@@ -5,6 +5,13 @@
  *
  * Run: npm run db:seed   (safe to re-run; it upserts exercises and rebuilds the demo user)
  */
+// Load .env when running locally (on Vercel the variables are already set).
+try {
+  process.loadEnvFile(".env");
+} catch {
+  /* no .env file */
+}
+
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { fetchAllWgerExercises } from "../src/lib/wger";
@@ -84,7 +91,7 @@ async function seedDemo() {
 
   // Push / Pull / Legs rotation, 3–4 days a week, with steady progression.
   const plans = [
-    { title: "Push Day", items: [[bench, 135, 8, 5], [incline, 45, 10, 2.5], [ohp, 85, 8, 2.5], [lateral, 15, 12, 0.5]] },
+    { title: "Push Day", items: [[bench, 135, 8, 5], [incline, 95, 10, 2.5], [ohp, 85, 8, 2.5], [lateral, 15, 12, 0.5]] },
     { title: "Pull Day", items: [[deadlift, 185, 5, 10], [row, 115, 8, 5], [pullup, 0, 8, 0], [curl, 55, 10, 2.5]] },
     { title: "Leg Day", items: [[squat, 155, 6, 7.5], [legPress, 230, 10, 10]] },
   ] as const;
@@ -94,9 +101,8 @@ async function seedDemo() {
   const offsets: number[] = [];
   // Days ago for each workout over ~8 weeks (Mon/Wed/Fri/Sat-ish), newest first ends yesterday/today.
   for (let week = 7; week >= 0; week--) {
-    for (const d of week % 2 ? [6, 4, 2] : [6, 4, 2, 1]) offsets.push(week * 7 + d - 1);
+    for (const d of week % 2 ? [6, 4, 2] : [6, 4, 2, 1]) offsets.push(week * 7 + d);
   }
-  offsets.push(0);
 
   let session = 0;
   for (const daysAgo of offsets) {
@@ -134,8 +140,15 @@ async function seedDemo() {
 }
 
 async function main() {
-  await importExercises();
-  await seedDemo();
+  const force = process.argv.includes("--force");
+  // Runs on every deploy, so only do work that's missing (pass --force to redo both).
+  const libraryCount = await prisma.exercise.count({ where: { userId: null } });
+  if (force || libraryCount === 0) await importExercises();
+  else console.log(`Exercise library already has ${libraryCount} exercises, skipping import.`);
+
+  const demo = await prisma.user.findUnique({ where: { email: DEMO_EMAIL } });
+  if (force || !demo) await seedDemo();
+  else console.log("Demo user already exists, skipping.");
 }
 
 main()

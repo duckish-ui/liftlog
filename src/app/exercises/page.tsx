@@ -69,7 +69,7 @@ export default async function ExercisesPage({ searchParams }: { searchParams: SP
         {mine && <input type="hidden" name="mine" value="1" />}
       </form>
 
-      <div className="mb-6 flex gap-1.5 overflow-x-auto pb-1">
+      <div className="no-scrollbar mb-6 flex gap-1.5 overflow-x-auto pb-1">
         <Link
           href={href({ mine: mine ? "" : "1" })}
           className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${mine ? "bg-white text-black" : "bg-panel-2 text-zinc-300 hover:text-white"}`}
@@ -105,7 +105,7 @@ export default async function ExercisesPage({ searchParams }: { searchParams: SP
               <div className="mt-2 flex flex-wrap gap-1.5">
                 <span className="chip">{e.category}</span>
                 {e.userId && <span className="chip">custom</span>}
-                {e.muscles.slice(0, 2).map((m) => (
+                {e.muscles.filter((m) => m !== e.category).slice(0, 2).map((m) => (
                   <span key={m} className="chip text-muted">
                     {m}
                   </span>

@@ -46,3 +46,9 @@ body {
 @utility chip {
   @apply inline-flex items-center rounded-full border border-line bg-panel-2 px-2.5 py-0.5 text-xs text-zinc-300;
 }
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

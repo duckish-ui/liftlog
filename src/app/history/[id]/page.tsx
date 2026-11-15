@@ -1,10 +1,20 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Clock, Pencil, Trophy } from "lucide-react";
-import { requireUser } from "@/lib/auth";
+import { getSession, requireUser } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { getWorkoutDetail } from "@/lib/workouts";
 import { e1rm, formatDate, formatNumber, volume } from "@/lib/stats";
 import DeleteWorkoutButton from "@/components/DeleteWorkoutButton";
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const session = await getSession();
+  const w = session
+    ? await prisma.workout.findFirst({ where: { id, userId: session.userId }, select: { title: true } })
+    : null;
+  return { title: w?.title ?? "Workout" };
+}
 
 export default async function WorkoutDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const user = await requireUser();

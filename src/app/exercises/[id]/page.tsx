@@ -7,6 +7,12 @@ import { fetchWgerExercise } from "@/lib/wger";
 import { e1rm, formatDate } from "@/lib/stats";
 import { ProgressChart } from "@/components/Charts";
 
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const e = await prisma.exercise.findUnique({ where: { id }, select: { name: true } });
+  return { title: e?.name ?? "Exercise" };
+}
+
 export default async function ExerciseDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const user = await requireUser();
   const { id } = await params;

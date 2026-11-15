@@ -48,7 +48,7 @@ Requires Node 20+ and a Postgres database (e.g. a free Neon project).
 cp .env.example .env      # fill in DATABASE_URL and DATABASE_URL_UNPOOLED
 npm install
 npx prisma migrate deploy # create tables
-npm run db:seed           # import wger exercises + demo account
+npm run db:seed           # import wger exercises + demo account (also runs on every Vercel build, only fills what is missing)
 npm run dev               # http://localhost:3000
 ```
 

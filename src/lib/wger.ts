@@ -32,9 +32,12 @@ export function stripHtml(html: string) {
     .replace(/<[^>]+>/g, "")
     .replace(/&nbsp;/g, " ")
     .replace(/&amp;/g, "&")
+    .replace(/[​-‍﻿]/g, "")
     .replace(/\n{2,}/g, "\n")
     .trim();
 }
+
+const clean = (s: string) => s.replace(/[​-‍﻿]/g, "").trim();
 
 function normalize(info: WgerExerciseInfo): WgerExercise | null {
   const en = info.translations.find((t) => t.language === ENGLISH);
@@ -42,7 +45,7 @@ function normalize(info: WgerExerciseInfo): WgerExercise | null {
   const main = info.images.find((i) => i.is_main) ?? info.images[0];
   return {
     wgerId: info.id,
-    name: en.name.trim(),
+    name: clean(en.name),
     category: info.category?.name ?? "Other",
     muscles: info.muscles.map(muscleName),
     secondaryMuscles: info.muscles_secondary.map(muscleName),

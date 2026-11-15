@@ -128,7 +128,7 @@ export default function ExercisePicker({
                   placeholder="Search 800+ exercises…"
                 />
               </div>
-              <div className="flex gap-1.5 overflow-x-auto pb-1">
+              <div className="no-scrollbar flex gap-1.5 overflow-x-auto pb-1">
                 {["", ...CATEGORIES].map((c) => (
                   <button
                     key={c || "all"}

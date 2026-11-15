@@ -23,14 +23,25 @@ export async function GET(req: Request) {
     ],
   };
 
-  const exercises = await prisma.exercise.findMany({
-    where,
+  const select = { id: true, name: true, category: true, muscles: true, equipment: true, userId: true } as const;
+
+  // Rank names that start with the query ("Squats" for "squat") above ones that merely contain it.
+  const prefix = q
+    ? await prisma.exercise.findMany({
+        where: { AND: [where, { name: { startsWith: q, mode: "insensitive" } }] },
+        orderBy: [{ name: "asc" }],
+        take: limit,
+        select,
+      })
+    : [];
+  const rest = await prisma.exercise.findMany({
+    where: { AND: [where, { id: { notIn: prefix.map((e) => e.id) } }] },
     orderBy: [{ name: "asc" }],
-    take: limit,
-    select: { id: true, name: true, category: true, muscles: true, equipment: true, userId: true },
+    take: limit - prefix.length,
+    select,
   });
 
-  return NextResponse.json(exercises.map(({ userId, ...e }) => ({ ...e, custom: userId !== null })));
+  return NextResponse.json([...prefix, ...rest].map(({ userId, ...e }) => ({ ...e, custom: userId !== null })));
 }
 
 // POST /api/exercises — create a custom exercise for the current user.
