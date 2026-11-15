@@ -2,7 +2,7 @@
 
 A simple gym workout tracker. Log workouts (exercises, sets, weight × reps), then see your streak, weekly volume, personal records and per-exercise progress charts.
 
-**Live:** _see Vercel URL below_ · **Demo login:** `demo@liftlog.app` / `liftlog123`
+**Live:** https://liftlog-mauve.vercel.app · **Design:** [Figma](https://www.figma.com/design/JGtZhIBJ7DXjVZXNeMExgn) · **System design:** [docs/SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md) · **Demo login:** `demo@liftlog.app` / `liftlog123`
 
 Built for **Full Stack Decal — Project 3: Final Project**.
 
